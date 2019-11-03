@@ -1,0 +1,41 @@
+body {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+
+a {
+  text-decoration: none;
+}
+
+table {
+  margin:150px auto;
+  /*boderのスタイルを決めている*/
+  border: 1px solid #ddd;
+  /*隣接するboderのを重ねて表示させる*/
+  border-collapse: collapse;
+}
+
+th {
+  background: #eee;
+}
+
+th, td {
+  padding: 7px;
+  text-align: center;
+}
+
+.youbi_0 {
+  color: red;
+}
+
+.youbi_6 {
+  color: bule;
+}
+
+.today {
+  font-weight: bold;
+}
+
+.gray {
+  color: #dedede;
+}
