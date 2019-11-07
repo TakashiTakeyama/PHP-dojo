@@ -1,3 +1,13 @@
+<?php
+
+require_once(__DIR__ . '/config.php');
+require_once(__DIR__ . '/Quiz.php');
+
+$quiz = new Quiz();
+
+$data = $quiz->getCurrentQuiz();
+shuffle($data['a']);
+?>
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -7,14 +17,15 @@
   </head>
   <body>
     <div id="container">
-      <h1>Q. What is A?</h1>
+      <h1>Q. <?= h($data['q']); ?></h1>
         <ul>
-          <li class="answer">A0</li>
-          <li class="answer">A1</li>
-          <li class="answer">A2</li>
-          <li class="answer">A3</li>
+          <?php foreach ($data['a'] as $a) : ?>
+            <li class="answer"><?= h($a); ?></li>
+          <?php endforeach; ?>
         </ul>
-        <div id="btn" class="disabled">Next Question></div>
+        <div id="btn" class="disabled">Next Question</div>
     </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="js/quiz.js"></script>
   </body>
 </html>
