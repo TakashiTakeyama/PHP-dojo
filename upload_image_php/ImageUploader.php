@@ -3,22 +3,68 @@
 namespace MyApp;
 
 class ImageUploader {
+
+  private $_imageFileName;
+
   public function upload() {
     try {
       // error check
       $this->_validateUpload();
 
-      // typek check
+      // type check
+      $ext = $this->_validateImageType();
+      // var_dump($ext);
+      // exit;
+
       // save
+      $savePath = $this->_save($ext);
+
       // create thumbnail
+      $this->_createThumbnail($savePath);
 
     } catch (\Exception $e) {
       echo $e->getMessage();
       exit;
     }
     // redirect
-    header('Location: http//' . $_SERVER['HTTP_HOST']);
+    header('Location: http://' . $_SERVER['HTTP_HOST']);
     exit;
+  }
+
+  private function _createThumbnail($savePath) {
+    $imagesize = getimagesize($savePath);
+    $width = $imageSize[0];
+    $height = $imageSize[1];
+    
+  }
+
+  private function _save($ext) {
+    $this->_imageFileName = sprintf(
+      '%s_%s.%s',
+      time(),
+      sha1(uniqid(mt_rand(), true)),
+      $ext
+    );
+    $savePath = IMAGES_DIR . '/' . $this->_imageFileName;
+    $res = move_uploaded_file($_FILES['image']['tmp_name'], $savePath);
+    if ($res === false) {
+      throw new \Exception('Could not upload!');
+    }
+    return $savePath;
+  }
+
+  private function _validateImageType() {
+    $imageType = exif_imagetype($_FILES['image']['tmp_name']);
+    switch($imageType) {
+      case IMAGETYPE_GIF:
+        return 'gif';
+      case IMAGETYPE_JPEG:
+        return 'jpg';
+      case IMAGETYPE_PNG:
+        return 'png';
+      default:
+        throw new \Exception('PNG/JPEG/GIF only!');
+    }
   }
 
   private function _validateUpload() {
@@ -38,5 +84,6 @@ class ImageUploader {
       default:
         throw new \Exception('Err: ' . $_FILES['image']['error']);
     }
+
   }
 }
