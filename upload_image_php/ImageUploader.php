@@ -32,6 +32,26 @@ class ImageUploader {
     exit;
   }
 
+
+  public function getImages() {
+    $images = [];
+    $files = [];
+    $imageDir = opendir(IMAGES_DIR);
+    while (false !== ($file = readdir($imageDir))) {
+      if ($file === '.' || $file === '..') {
+        continue;
+      }
+      $files[] = $file;
+      if (file_exists(THUMNAIL_DIR . '/' . $file)) {
+        $images[] = basename(THUMNAIL_DIR) . '/' . $file;
+      } else {
+        $images[] = basename(IMAGES_DIR) . '/' . $file;
+      }
+      array_multisort($files, SORT_DESC, $images);
+      return $images;
+    }
+  }
+
   private function _createThumbnail($savePath) {
     $imageSize = getimagesize($savePath);
     $width = $imageSize[0];
@@ -55,7 +75,7 @@ class ImageUploader {
     }
     $thumbHeight = round($height * THUMBNAIL_WIDTH / $width);
     $thumbImage = imagecreatetruecolor(THUMBNAIL_WIDTH, $thumbHeight);
-    imagecopyresampled($thumbImage, $srcImage, 0,0,0,0, THUMBNAIL_WIDTH,$thumbHeight, $width, $height);
+    imagecopyresampled($thumbImage, $srcImage, 0, 0, 0, 0, THUMBNAIL_WIDTH,$thumbHeight, $width, $height);
     
     switch($this->_imageType) {
       case IMAGETYPE_GIF:
