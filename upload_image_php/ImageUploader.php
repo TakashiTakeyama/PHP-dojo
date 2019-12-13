@@ -5,6 +5,7 @@ namespace MyApp;
 class ImageUploader {
 
   private $_imageFileName;
+  private $_imageType;
 
   public function upload() {
     try {
@@ -31,12 +32,64 @@ class ImageUploader {
     exit;
   }
 
+
+  public function getImages() {
+    $images = [];
+    $files = [];
+    $imageDir = opendir(IMAGES_DIR);
+    while (false !== ($file = readdir($imageDir))) {
+      if ($file === '.' || $file === '..') {
+        continue;
+      }
+      $files[] = $file;
+      if (file_exists(THUMNAIL_DIR . '/' . $file)) {
+        $images[] = basename(THUMNAIL_DIR) . '/' . $file;
+      } else {
+        $images[] = basename(IMAGES_DIR) . '/' . $file;
+      }
+      array_multisort($files, SORT_DESC, $images);
+      return $images;
+    }
+  }
+
   private function _createThumbnail($savePath) {
-    $imagesize = getimagesize($savePath);
+    $imageSize = getimagesize($savePath);
     $width = $imageSize[0];
     $height = $imageSize[1];
-    
+    if ($width > THUMBNAIL_WIDTH) {
+      $this->_createThumbnailMain($savePath, $width, $height);
+    }
   }
+
+  private function _createThumbnailMain($savePath, $width, $height) {
+    switch($this->_imageType) {
+      case IMAGETYPE_GIF:
+        $srcImage = imagecreatefromgif($savePath);
+        break;
+      case IMAGETYPE_JPEG:
+        $srcImage = imagecreatefromjpeg($savePath);
+        break;
+     case IMAGETYPE_PNG:
+        $srcImage = imagecreatefrompng($savePath);
+        break;
+    }
+    $thumbHeight = round($height * THUMBNAIL_WIDTH / $width);
+    $thumbImage = imagecreatetruecolor(THUMBNAIL_WIDTH, $thumbHeight);
+    imagecopyresampled($thumbImage, $srcImage, 0, 0, 0, 0, THUMBNAIL_WIDTH,$thumbHeight, $width, $height);
+    
+    switch($this->_imageType) {
+      case IMAGETYPE_GIF:
+        imagegif($thumbImage, THUMNAIL_DIR . '/' . $this->_imageFileName);
+        break;
+      case IMAGETYPE_JPEG:
+        imagejpeg($thumbImage, THUMNAIL_DIR . '/' . $this->_imageFileName);
+        break;
+     case IMAGETYPE_PNG:
+        imagepng($thumbImage, THUMNAIL_DIR . '/' . $this->_imageFileName);
+        break;
+      }
+  }  
+
 
   private function _save($ext) {
     $this->_imageFileName = sprintf(
@@ -54,8 +107,8 @@ class ImageUploader {
   }
 
   private function _validateImageType() {
-    $imageType = exif_imagetype($_FILES['image']['tmp_name']);
-    switch($imageType) {
+    $this->_imageType = exif_imagetype($_FILES['image']['tmp_name']);
+    switch($this->_imageType) {
       case IMAGETYPE_GIF:
         return 'gif';
       case IMAGETYPE_JPEG:
