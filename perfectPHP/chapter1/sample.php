@@ -154,3 +154,164 @@ $a = new SomeClass();
 if ($a instanceof SomeClass) {
   echo '$a は SomeClass のインスタンスです。', PHP_EOL;
 }
+
+// インターフェイス 'iTemplate' を宣言する
+// interface iTemplate
+// {
+//     public function setVariable($name, $var);
+//     public function getHtml($template);
+// }
+
+// インターフェイスを実装する。
+// これは動作します。
+// class Template implements iTemplate
+// {
+//     private $vars = array();
+
+//     public function setVariable($name, $var)
+//     {
+//         $this->vars[$name] = $var;
+//     }
+
+//     public function getHtml($template)
+//     {
+//         foreach($this->vars as $name => $value) {
+//             $template = str_replace('{' . $name . '}', $value, $template);
+//         }
+
+//         return $template;
+//     }
+// }
+
+// これは動作しません。
+// Fatal error: Class BadTemplate contains 1 abstract methods
+// and must therefore be declared abstract (iTemplate::getHtml)
+// class BadTemplate implements iTemplate
+// {
+//     private $vars = array();
+
+//     public function setVariable($name, $var)
+//     {
+//         $this->vars[$name] = $var;
+//     }
+// }
+
+interface FooInterface
+{
+  
+}
+
+class ParentFoo
+{
+
+}
+
+class Foo extends ParentFoo implements FooInterface
+{
+  
+}
+
+class Bar
+{
+
+}
+
+$a = new Foo();
+var_dump($a instanceof Foo);
+var_dump($a instanceof ParentFoo);
+var_dump($a instanceof FooInterface);
+var_dump($a instanceof Bar);
+
+$param = isset($argv[1]) ? $argv[1] : 'default';
+echo $param;
+
+function some_func() {
+  $val = '...'; //何かしらロジックを書いたとする。
+  return $val;
+}
+
+$result = some_func() ? some_func() : 'default';
+//上記と同義である。
+$result = some_func() ?: 'defalut';
+//PHPの結合規則は左結合である。
+$flag1 = true;
+$flag2 = false;
+echo $flag1 ? 1 : $flag2 ? 2 : 0, PHP_EOL;
+//実際の評価
+echo( ( $flag1 ? 1 : $flag2) ? 2 : 0),PHP_EOL;
+//最初に$flag1が評価されるので評価は1その後1が評価されるので評価は2になる。
+$b = $a = 2 * 3 + 5;
+
+echo $a, PHP_EOL;
+echo $b, PHP_EOL;
+
+//エラー制御演算子@は、その式で発生するエラーを抑制する。
+$var = @$_GET['foo'];
+echo $var;
+
+//実行演算子``外部のシェルコマンドを実行する為の演算子
+//オプションi大文字小文字を区別しない、rディレクトリ内も検索する、検索結果に行番号を表示する。
+// $result = `grep -irn php *`;
+echo $result;
+
+$fruits = array(
+  'apple',
+  'banana',
+  'orange',
+); 
+
+echo $fruits[0], PHP_EOL;
+//空のブラケットによる配列の初期化は初めての変数に対してのみ有効、複数のデータ型が入り混じるような配列もつくることができる。
+
+$fruits_color = array(
+  'apple' => 'red',
+  'banana' => 'yellow',
+  'orange' => 'orange',
+);
+
+echo $fruits_color['banana'], PHP_EOL;
+
+$fruits_mixed = array(
+  'peach',
+  'blueberry',
+  'apple' => 'red',
+  'banana' => 'yellow',
+  'orange' => 'orange',
+); 
+
+$array = array(
+  4,
+  5,
+  1 => "これは1",
+  'string_key' => '最初の定義',
+  'string_key' => '次の定義',
+);
+//初期化時にキーが重複していた場合、後に定義された要素が上書きされる。
+echo var_dump($array);
+
+//多次元配列
+$fruits = array(
+  'apple' => array(
+    'price' => 100,
+    'count' => 2,
+  ),
+
+  'banana' => array(
+    'price' => 80,
+    'count' => 5,
+  ),
+
+  'orange' => array(
+    'price' => 90,
+    'count' => 3,
+  ),
+);
+
+foreach ($fruits as $name => $value) {
+  echo "$name は 一つ {$value['price']} 円で、{$value['count']}個です", PHP_EOL;
+}
+//配列の結合は、左辺にも同じキーを持つ要素があればそれは上書きされない。array_merge()関数が一つまたは複数の配列をマージする。
+//配列のキーがセットされているか確認する方法 array_key_exists()という関数がある。issetでも調べることができる。
+$array = array('hoge' => 1, 'fuga' => 2,);
+echo array_key_exists('hoge', $array), PHP_EOL;//内部的には引数に渡したkeyが配列内に存在するか全てしらべる為時間がかかる。
+echo isset($array['hoge']);//配列ないにセットされているかどうかだけ調べるので、時間が短縮できる。
