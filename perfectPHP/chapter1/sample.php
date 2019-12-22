@@ -315,3 +315,221 @@ foreach ($fruits as $name => $value) {
 $array = array('hoge' => 1, 'fuga' => 2,);
 echo array_key_exists('hoge', $array), PHP_EOL;//内部的には引数に渡したkeyが配列内に存在するか全てしらべる為時間がかかる。
 echo isset($array['hoge']);//配列ないにセットされているかどうかだけ調べるので、時間が短縮できる。
+
+//逐次実行
+
+$array = array(1,2,3,4,5);
+for ($i = 0, $end = count($array); $i < $end; ++$i) {
+  echo $array[$i], PHP_EOL;
+}
+
+foreach ($array as $value) {
+  echo $value, PHP_EOL;
+}
+
+$fruits_color = array(
+  'apple' => 'red',
+  'banana' => 'yellow',
+  'orange' => 'orange',
+);
+
+foreach ($fruits_color as $name => $color) {
+  echo "このフルーツは".$name."です。".$color . "色です。", PHP_EOL;
+}
+//unset 指定した変数の割り当てを解除する。
+//通常foreachの反復に参照を用いることは推奨されない、ブロックスコープがない為、上記の$color変数はforeachブロックを抜けた後も値が維持される
+//だから最後にunsetを関数を用いて割り当てた変数を解除する。
+foreach ($fruits_color as &$color) {
+  $color = 'black';
+}
+
+foreach ($fruits_color as $name => $color) {
+  echo "このフルーツは".$name."です。".$color . "色です。", PHP_EOL;
+}
+//unset 指定した変数の割り当てを解除する。
+
+foreach ($fruits_color as $name => $color) {
+  // echo "このフルーツは".$name."です。".$color . "色です。", PHP_EOL;
+}
+var_dump($fruits_color);
+unset($color);
+var_dump($fruits_color);
+unset($color);
+//unset 指定した変数の割り当てを解除する。
+
+//リファレンス渡し
+//PHPでリファレンスとは同じ変数の内容を違う名前でコールする事
+function foo(&$var)
+{
+    $var++;
+}
+
+$a=5;
+foo($a);
+// $a はここでは 6 です
+
+$dice = range(1,6);
+shuffle($dice);
+foreach ($dice as $value) {
+  echo "サイコロの目は" . $value . "です。", PHP_EOL;
+  if ($value === 6) {
+  break;
+  }
+}
+
+$hour = date('G');
+if ($hour === '6') {
+  echo "朝の６時です。", PHP_EOL;
+} elseif ($hour === '12') {
+  echo "正午です、こんにちは";
+}
+
+switch ($hour) {
+  case '6':
+    echo "朝の６時です。";
+  break;
+  case '12':
+    echo "正午です、こんにちは。";
+  break;
+  default:
+    echo "どうも";
+  break;
+}
+/*requireとrequire_onceでは、読み込む対象のファイルが存在しないとerrorになる(fatal)依存しているライブラリやファイルがを読み込まないと
+プログラムの実行に支障をきたすときに使う。
+require_onceは一度読み込んだファイルは二度と読み込まない、クラスや関数の定義がされているファイルを二度読み込むと同じ名前のクラスを二度定義できないと
+errorが出る。*/
+
+/*読み込んで
+require 'some.php';
+読み込んだファイルに定義されているクラスを使用できる。
+$obj = new SomeLib;
+読み込んだファイルに何らかの処理や出力が実行される物が記述されていると読み込んだ時点で実行されてしまう。
+include と include_onceは読み込めなくてもFatalerrorにはならない。
+*/
+
+// if ($is_error) {
+//   goto error;
+// }
+
+// error:
+//   echo "エラーが発生しました。",PHP_EOL;
+//   exit(1);
+  //一般的にはあまり利用されていない。
+
+//PHPでは標準で多くのグローバル関数が定義されている為、関数名が衝突しないようにする、アプリケーション名やモジュール名を接頭語としてつけ、アンダースコアーで繋ぎ関数名にする。
+function mymodule_abs($num) {
+  if ($num < 0) {
+    return - $num;
+  }
+  return $num;
+}
+/*PHPの関数では引数や返り値に型を指定しない為どのような変数でも引数に渡すことができる。
+タイプヒンティングという手法があり渡される値を特定のクラスまたは配列にすることができる。*/
+function array_output(array $var) {
+  if (is_array($var)) foreach($var as $v) {
+    echo $v, PHP_EOL;
+  }
+}
+
+$array = array(1,2,3);
+array_output($array);
+// array_output(1);
+
+echo "初めまして", PHP_EOL;
+/*関数はいかなるタイミングや場所で実行されようとも、定義時のコンテキストで実行される。
+クロージャは関数とその関数の定義時のコンテキストをセットにした特殊なオブジェクト
+なぜクロージャを使うか？クロージャはテクニックにすぎない
+グローバル変数を使わずに状態を保持させる為
+関数をつくる関数*/
+
+$array = array(1, 1.5, "2", true);
+$new_array = array_map('strval', $array);
+var_dump($new_array);
+
+//コールバック関数: 引数に関数を指定すると特定の処理にその関数を呼び出すような関数があるそれをコールバック関数という。
+function func_caller($name)
+{
+  if (function_exists($name)) {
+    $name();
+  }
+}
+
+function moo()
+{
+  echo 'moo called', PHP_EOL;
+}
+/*この例ではmooという引数を指定してfunc_callerを呼び出している。
+function_exists();は組み込みの関数*/
+func_caller('moo');
+
+function add($v1, $v2)
+{
+  return $v1 + $v2;
+}
+
+class Math
+{
+  public function sub($v1, $v2)
+  {
+    return $v1 - $v2;
+  }
+
+  public static function add($v1, $v2)
+  {
+    return $v1 + $v2;
+  }
+}
+
+call_user_func('add', 1, 2);
+/*call_user_func ( callable $callback [, mixed $parameter [, mixed $... ]] ) : mixed
+最初の引数で指定したコールバック関数をコールする。*/
+
+// error_reporting(E_ALL);
+function increment(&$var)
+{
+    $var++;
+}
+
+$a = 0;
+call_user_func('increment', $a);
+echo $a."\n";
+
+// このようにしてもかまいません
+call_user_func_array('increment', array(&$a));
+echo $a."\n";
+
+function add_one(&$value)
+{
+  $value += 1;
+}
+
+$a = 10;
+add_one($a);
+echo $a, PHP_EOL;
+//値渡しではなく、参照で渡される為グローバル変数の$aのそのものの値が変更されている。引数を参照で受け取る関数には、値を直接渡すことはできず、必ず変数でないといけない。
+
+function &add_onee(&$value)
+{
+  $value += 1;
+  return $value;
+}
+$a = 10;
+$b =& add_onee($a);
+$b += 1;
+echo $b, PHP_EOL;
+echo $a, PHP_EOL;
+//関数の返り値に参照を用いたい場合は、関数名の前に&をつけて関数を定義する。
+/*PHPは可変関数がある、変数名の後ろに()をつけることで同名の関数を呼び出すことができる。*/
+function callback_func()
+{
+  return "foo";
+}
+
+function func($callback)
+{
+  echo "callbackfunction result :" . $callback() . PHP_EOL;
+}
+
+func("callback_func");//=>:callbackfunction result :foo
+//無名関数、一見可変関数のように呼び出すが、文字列で定義された関数名を呼び出すのではなく、その変数自体が関数オブジェクトである。
