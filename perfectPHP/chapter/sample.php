@@ -531,5 +531,73 @@ function func($callback)
   echo "callbackfunction result :" . $callback() . PHP_EOL;
 }
 
-func("callback_func");//=>:callbackfunction result :foo
+/*func("callback_func");//=>:callbackfunction result :foo
 //無名関数、一見可変関数のように呼び出すが、文字列で定義された関数名を呼び出すのではなく、その変数自体が関数オブジェクトである。
+/*関数の返り血に参照を用いたい場合は、関数名の前に&をつけて関数を定義します。
+また返り値を受け取る際、代入演算子にも&をつける必要がある。*/
+
+function &add_oneee(&$value)
+{
+  $value += 1;
+  return $value;
+}
+
+$a = 10;
+$b =& add_oneee($a);
+$b += 1;
+echo "よろしく", PHP_EOL;
+echo $a, PHP_EOL;
+
+$add = function($v1, $v2)
+{
+  return $v1 + $v2;
+};
+//指定した配列の要素にコールバック関数を適用する。
+$escaped = array_map(function($value){
+  /*htmlspecialchars 特殊文字をhtmlエンティティに変換する、ENT_QUOTES シングルクオートとダブルクオートを共に変換する。*/
+  return htmlspecialchars($value, ENT_QUOTES);
+}, $array);
+
+var_dump($escaped);
+
+function cube($n)
+{
+  return($n * $n * $n);
+}
+$a = array(1,2,3,4,5);
+$b = array_map("cube", $a);
+
+var_dump($b);
+
+//クロージャ
+$my_pow = function($times = 2)
+{
+  return function($v) use (&$times)
+  {
+    return pow($v, $times);
+  };
+};
+
+$cube = $my_pow(3);
+echo $cube(1), PHP_EOL;
+echo $cube(2), PHP_EOL;
+
+// $array = array(1,2,3,4,5);
+// array_map(create_function('$v', 'return $v * 2;'),$array);
+// var_dump($array);
+//難しい
+$v = array(1,2,3,4,5);
+// echo "aaaaa";
+$arr = array_map(function($v) { return $v * 2; }, $array);
+var_dump($arr);
+print_r($arr);
+
+function myrow($id, $data)
+{
+    return "<tr><th>$id</th><td>$data</td></tr>\n";
+}
+
+//組み込み関数、ユーザー定義関数共に登録されている関数が表示される。
+$arr = get_defined_functions();
+
+print_r($arr);
