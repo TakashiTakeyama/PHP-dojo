@@ -179,4 +179,144 @@ class Configure implements Reader, Writer
   {
 
   }
+  //インターフェイスに定義されているメソッドを実装しないと致命的なerrorとなる。
+  //タイプヒンティングは引数に渡される変数を、配列か特定のオブジェクトかをチェックする仕組み
+
 }
+class Foo
+{
+  public function bar (Iterator $itr)
+  {
+
+  }
+}
+
+class Fooo
+{
+  public function bar($itr)
+  {
+    if ($itr instanceof Iterator === false) {
+      throw new InvalidArgumentException('Interface Error');
+    }
+  }
+}
+
+class Employeeee
+{
+  public function __toString()
+  {
+    return 'This class is:'. __CLASS__;
+  }
+}
+
+$yamada = new Employeeee;
+echo $yamada;
+
+class SampleClass
+{
+    //プロパティの宣言
+    //class/インスタンスから :: で参照ok
+    public static $var = 'This is Sample Class.';
+    //　インスタンス必須
+    public $var2 = 'This is Sample Class.';
+}
+
+//インスタンスの生成
+$ins= new SampleClass();
+
+echo "class direct\n";
+echo SampleClass::$var;
+echo "koko\n";
+echo SampleClass::$var;
+
+echo "instanceから\n";
+echo $ins::$var;
+
+echo "\n--------------\n";
+
+
+echo "staticはinstance変数ではとれない\n";
+// echo $ins->var;                  // error
+echo $ins->var2;                  // staticじゃないのはとれる
+
+class SomeClass
+{
+  private $values = array();
+
+  public function __get($name)
+  {
+    echo "get: $name", PHP_EOL;
+    if (!isset($this->values[$name])) {
+      throw new OutOfBoundsException($name . "not found");
+    }
+    return $this->values[$name];
+  }
+
+  public function __set($name, $value)
+  {
+    echo "set: $name setted to $value", PHP_EOL;
+    $this->values[$name] = $value;
+  }
+
+  public function __isset($name)
+  {
+    echo "isset: $name", PHP_EOL;
+    return isset($this->values[$name]);
+  }
+
+  public function __unset($name)
+  {
+    echo "unset: $name", PHP_EOL;
+    unset($this->values[$name]);
+  }
+
+  public function __call($name, $args)
+  {
+    echo "call: $name", PHP_EOL;
+
+    //アンダースコアをつけ、メソッド名とする。
+    $method_name = '_' . $name;
+    if (!is_callable(array($this, $method_name))) {
+      throw new BadMethodCallException($name . " method not found.");
+    }
+    //プログラムの実行中に他の関数やメソッドを実行して呼び出すことをコールすると言う。
+
+    //パラメータの配列を指定してコールバック関数を実行する
+    return call_user_func_array(array($this, $method_name), $args);
+  }
+
+  public static function __callStatic($name, $args)
+  {
+    echo "callStatic: $name", PHP_EOL;
+    $method_name = '_' . $name;
+    if (!is_callable(array('self', $method_name))) {
+      throw new BadMethodCallException($name . "method not found.");
+    }
+    return call_user_func_array(array('self', $method_name), $args);
+  }
+
+  private function _bar($value)
+  {
+    echo "bar called with arg '$value'", PHP_EOL;
+  }
+
+  private static function _staticBar($value)
+  {
+    echo "staticBar called with arg '$value'", PHP_EOL;
+  }
+}
+
+$obj = new SomeClass();
+/*この時、fooは宣言されていないプロパティなので、アクセス不能のプロパティの介入として、
+__set()メソッが呼び出される。
+この時の引数には、代入しようとしたプロパティ名"foo"と、代入しようとした値10が渡される
+この値は、実際にはprivateなプロパティ$valueという配列に保存される。*/
+
+$obj->foo = 10;
+var_dump($obj->foo);
+// $obj->foo;
+var_dump(isset($obj->foo));
+var_dump(empty($obj->foo));
+
+// $take = new SomeClass();
+// $take->__get("takashi");
