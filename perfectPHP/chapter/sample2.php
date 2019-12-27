@@ -320,3 +320,107 @@ var_dump(empty($obj->foo));
 
 // $take = new SomeClass();
 // $take->__get("takashi");
+unset($obj->foo);
+var_dump(isset($obj->foo));
+$obj->bar('baz');
+//メソッドのオーバーロードでも、アクセス不能なメソッドへのアクセスが行われた場合には
+//__call()や__callStatic()が代わりに呼ばれる。
+SomeClass::staticBar('baz');
+
+/*遅延静的束縛: 継承されたクラスのメソッドなどを親クラスで解決するための機能。
+*/
+class Foooo {
+  public function helloGateway()
+  {
+    self::hello();
+  }
+
+  public static function hello()
+  {
+    echo __CLASS__, 'hello!', PHP_EOL;
+  }
+}
+
+class Bar extends Foooo {
+  public static function hello()
+  {
+    echo __CLASS__, 'hello!!', PHP_EOL;
+  }
+}
+
+$bar = new Bar();
+//親クラスから継承したhelloメソッドをコールしている。
+$bar->helloGateway();
+
+function __autoload($name)
+{
+  $filename = $name . '.php';
+  //クラス名.phpというファイルが読み込めれば
+  if (is_readable($filename)) {
+    require $filename;
+  }
+}
+
+/*この場合まだ Fooクラスの定義はまだ存在していないので__autoload()関数が
+'Foo'を引数として呼び出す。*/
+$obj = new Foo();
+
+//名前空間とは、クラスや関数の使える名前の集合を限定し、関数名やクラス名の衝突を塞いだり、
+//機能の参照をわかりやすくするための機能です。
+
+// namespace Food\Sweets;
+
+// class Cake
+// {
+
+// }
+
+// require_once 'Cake.php';
+// $c = new Food\Sweets\Cake();
+//名前空間の影響を受けるのはクラス、関数、定数(constによって定義されるものに限る)
+/*
+namespace Project\Module;
+
+class Directory {} Project\Module\Directory クラス
+function file() {} Project\Module\file 関数
+const E_ALL = 0x01;Project\Module\E_ALL 定数
+$var = 0x01;       変数に名前空間は適用されない。
+同じ名前空間では、名前空間を省略できる
+グローバルからの絶対指定もできる。
+別の名前空間から参照する場合は、常に完全修飾子の指定をする。
+これはグローバルに定義されている(組み込みの定義すみ)クラスに対しても同様の事がいえる。
+一つのファイルに複数の名前空間を定義する。
+namespace Project\Module;
+ここはProject\Moduleの中
+class Directory {}: Project\Module\Directoryクラス
+
+namespace Project\Module2　Project\Module2　名前空間の中
+class Directory {}: Project\Module2\Directoryクラス
+
+namespace Project\Module;
+use Project\Module2 as AnotherModule;
+
+$obj = new AnotherModule\SomeClass(); new Project\Module\SomeClass()と等価
+グローバルに定義されているクラスなどもインポートすることができる、同様にuseでインポートすることができます。
+別の名前空間に定義されたBazクラスを、Bazという名前でアクセスできるようにする。
+use Foo\Bar\Baz;
+$baz = new Baz();*/
+
+//整数値10で初期化
+$a = 10;
+//参照代入演算子を使って=& $aの代入を行っている
+$b =& $a;
+//$aの代入を行うため10という値そのものが$cの持つ新しい領域にコピーされる。
+$c = $a;
+
+$a = 20;
+echo $b, PHP_EOL;
+$c = 10;
+echo $c, PHP_EOL;
+
+$ref =& $a;
+//参照演算子を使用して代入したら参照先の変数も変更される。
+$ref =& $c;
+$ref = 30;
+
+echo $c, PHP_EOL;
