@@ -424,3 +424,69 @@ $ref =& $c;
 $ref = 30;
 
 echo $c, PHP_EOL;
+
+function array_pass($array) {
+  $array[0] *= 2;
+  $array[1] *= 2;
+}
+
+function array_pass_ref(&$array) {
+  $array[0] *= 2;
+  $array[1] *= 2;
+}
+
+$a = 10;
+$b = 20;
+
+// $array = array($a, &$b);
+$array = array($a, $b);
+// array_pass($array);
+array_pass_ref($array);
+
+echo $a, PHP_EOL;
+echo $b, PHP_EOL;
+/*PHPでは、オブジェクトは参照でしか扱うことはできない。
+クラスのオブジェクトをnew演算子によってインスタンス化し、変数に代入した時実際には
+その変数はオブジェクトの参照となっている。
+この変数を他の変数に代入した時実際にはオブジェクトはコピーされず、参照がコピーされる。
+複製したい場合はclone演算子を使う。*/
+
+$a = new stdClass();
+$b = $a;
+$c =& $b;
+
+//ガベージコレクション: プログラムが動的に確保したメモリのうち、不要になった領域を自動的に開放する機能をのこと。
+//リファレンスカウント: 参照カウント
+class RefClass
+{
+  public function __construct()
+  {
+    echo __CLASS__, 'が生成されました。', PHP_EOL;
+  }
+
+  public function __destruct()
+  {
+    echo __CLASS__, 'が破棄されました。', PHP_EOL;
+  }
+}
+
+echo '** プログラム開始', PHP_EOL;
+echo '** new RefClass()', PHP_EOL;
+$a = new RefClass();
+echo '** $b = $a', PHP_EOL;
+$b = $a;
+//リファレンスカウントが2になる。
+echo '** unset $a', PHP_EOL;
+unset($a);
+echo '** unset $b', PHP_EOL;
+unset($b);
+//リファレンスカウントが0になった時オブジェクト自体が破棄される。
+echo '** プログラム終了', PHP_EOL;
+/*一般的にリファレンスカウントは互いに参照しあう(循環参照)の回収ができないといった問題がある
+PHP5.3には循環参照ガベージコレクタが使われ循環参照を持つオブジェクトも適切に回収されるようになる。 
+なお、明示的にgc_collect_cycles()関数を呼び出さない限り、循環参照を持つオブジェクトが回収される
+タイミングは不定であるため、デストラクタが呼ばれるタイミングに依存したコードを書いてはいけない。*/
+
+/*PHPでは変数を値渡しした際にもコピーオンライトという仕組みが使われる。
+変数の値のコピーは変更時に行われると言う事 
+PHPでは値渡しがされた場合でも変数が変更されるまで不要なコピーを発生させない事でリソースの節約ができる。*/
