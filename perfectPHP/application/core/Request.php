@@ -65,7 +65,9 @@ class Request
    
 
     /*strpos: 第一引数に指定した文字列から、第二引数に指定した文字列が最初に出現する位置を
-    調べる関数。 */
+    調べる関数。 
+    REQUEST_URIはそのまま、【ブラウザから送られてきた要求のURI】
+    SCRIPT＿NAMEは【実行されているスクリプトのパス】*/
     if (0 === strpos($request_url, $script_name)) {
       return rtrim(dirname($script_name), '/');
     }
@@ -79,11 +81,28 @@ class Request
     $request_uri = $this->getRequestUri();
 
     if (false !== ($pos = strpos($request_uri,'?'))) {
+      /*substr()関数は、第一引数で指定した文字列のうち、第二引数で指定した位置から
+      第三引数で指定した文字数分取得する関数
+      URLにGETパラメータを含む場合はREQUEST_URIに"?"が含まれているので
+      strpos()関数で判定を行い、substr()関数で"?"より前の箇所を抜き出している。*/
       $request_uri = substr($request_uri,0,$pos);
     }
 
+    //strlen: 文字列の長さをえる。
     $path_info = (string)substr($request_uri, strlen($base_url));
 
     return $path_info;
   }
+
+  /*PHPで正規表現によるマッチングを行うにはpreg_match()関数を使う。
+  preg_match(): 第三引数に変数を指定すると、キャプチャした値を取得することができる。
+  $pattern = '/ab(cd)ef/';
+  $string = 'abcdefghij';
+  preg_match($pattern, $string, $matches);
+
+  $pattern = '/ab(?P<foo>cd)ef/';
+  $string = 'abcdefghij';
+  preg_match($pattern, $string, $matches);
+  var_dump($matches);
+  */
 }
