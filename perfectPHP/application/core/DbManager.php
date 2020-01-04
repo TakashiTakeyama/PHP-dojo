@@ -1,6 +1,37 @@
 class DbManager
+<!-- 接続情報を管理する -->
 {
   protected $connections = array();
+  protected $repository_connection_map = array();
+  protected $repositories = array();
+
+  public function get($repository_name)
+  {
+    if (!isset($this->repositories[$repository_name])) {
+      $repository_class = $repository_name . 'Repository';
+      $con = $this->getConnectionForRepository($repository_name);
+
+      $repository = new $repository_class($con);
+
+      $this->repositories[$repository_name] = $repository;
+    }
+
+    return $this->repositories[$repository_name];
+  }
+
+  <!-- データベースとの接続を開放する処理 -->
+  <!-- __destruct(): インスタンスが破棄された際に実行されるマジックメソッド、インスタンスの破棄は
+  通常unset()を使った時などに呼ばれる。 -->
+  public function __destruct()
+  {
+    foreach ($this->repositories as $repository) {
+      unset($repository);
+    }
+
+    foreach ($this->connections as $con) {
+      unset($con);
+    }
+  }
 
   public function connect($name, $params)
   {
@@ -35,4 +66,32 @@ class DbManager
 
     return $this->connections[$name];
   }
+
+  public function setRepositoryConnectionMap($repository_name, $name)
+  {
+    $this->repository_connection_map[$repository_name] = $name;
+  }
+
+  public function getConnectionForRepository($repository_name)
+  {
+    if (isset($this->repository_connection_map[$repsitory_name])) {
+      $name = $this->repository_connection_map[$repository_name];
+      $con = $this->getConnection($name);
+    } else {
+      $con = $this->getConnection();
+    }
+
+    return $con;
+  }
 }
+
+<!-- DbManagerクラスの使い方
+$db_manager = new DbManager();
+$db_manager->connect('master', array(
+  'dsn' => 'mysql:dbname=mydb; host=localhost',
+  'user' => 'myuser',
+  'password' => 'myapass',
+));
+
+$db_manager->getConnection('master');
+$db_manager->getConnection(); -->
