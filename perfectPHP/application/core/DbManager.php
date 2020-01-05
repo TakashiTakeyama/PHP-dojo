@@ -1,5 +1,7 @@
+<?php
+
 class DbManager
-<!-- 接続情報を管理する -->
+// <!-- 接続情報を管理する -->
 {
   protected $connections = array();
   protected $repository_connection_map = array();
@@ -19,9 +21,10 @@ class DbManager
     return $this->repositories[$repository_name];
   }
 
-  <!-- データベースとの接続を開放する処理 -->
-  <!-- __destruct(): インスタンスが破棄された際に実行されるマジックメソッド、インスタンスの破棄は
-  通常unset()を使った時などに呼ばれる。 -->
+  // <!-- データベースとの接続を開放する処理 -->
+  // <!-- __destruct(): インスタンスが破棄された際に実行されるマジックメソッド、インスタンスの破棄は
+  // 通常unset()を使った時などに呼ばれる。 -->
+
   public function __destruct()
   {
     foreach ($this->repositories as $repository) {
@@ -42,8 +45,8 @@ class DbManager
       'options' => array(),
     ), $params);
 
-    PDO: データベース抽象化ライブラリ
-    <!-- MySQLやPostgreSQLなどの様々なデータベースに対する操作を同じ記述方法で扱えるようにするためのライブラリ -->
+    // PDO: データベース抽象化ライブラリ
+    // <!-- MySQLやPostgreSQLなどの様々なデータベースに対する操作を同じ記述方法で扱えるようにするためのライブラリ -->
     $con = new PDO(
       $params['dsn'],
       $params['user'],
@@ -51,8 +54,8 @@ class DbManager
       $params['options'],
     );
 
-    <!-- これはPDOの内部でエラーが起きた場合に例外を発生させるようにするためのもの -->
-    $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMOD_EXCEPTION);
+    // <!-- これはPDOの内部でエラーが起きた場合に例外を発生させるようにするためのもの -->
+    // $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMOD_EXCEPTION);
 
     $this->connections[$name] = $con;
   }
@@ -60,7 +63,7 @@ class DbManager
   public function getConnection($name = null)
   {
     if (is_null($name)) {
-      <!-- current()関数は配列の内部ポインタが示す値を取得する関数 -->
+      // <!-- current()関数は配列の内部ポインタが示す値を取得する関数 -->
       return current($this->connections);
     }
 
@@ -74,7 +77,7 @@ class DbManager
 
   public function getConnectionForRepository($repository_name)
   {
-    if (isset($this->repository_connection_map[$repsitory_name])) {
+    if (isset($this->repository_connection_map[$repository_name])) {
       $name = $this->repository_connection_map[$repository_name];
       $con = $this->getConnection($name);
     } else {
@@ -85,13 +88,13 @@ class DbManager
   }
 }
 
-<!-- DbManagerクラスの使い方
-$db_manager = new DbManager();
-$db_manager->connect('master', array(
-  'dsn' => 'mysql:dbname=mydb; host=localhost',
-  'user' => 'myuser',
-  'password' => 'myapass',
-));
+// <!-- DbManagerクラスの使い方
+// $db_manager = new DbManager();
+// $db_manager->connect('master', array(
+//   'dsn' => 'mysql:dbname=mydb; host=localhost',
+//   'user' => 'myuser',
+//   'password' => 'myapass',
+// ));
 
-$db_manager->getConnection('master');
-$db_manager->getConnection(); -->
+// $db_manager->getConnection('master');
+// $db_manager->getConnection(); -->

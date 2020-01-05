@@ -1,6 +1,6 @@
 <?php
 
-class Route
+class Router
 {
   protected $routes;
 
