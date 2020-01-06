@@ -12,6 +12,19 @@ abstract class Application
   protected $response;
   protected $session;
   protected $db_manager;
+  protected $login_action = array();
+
+  public function run()
+  {
+    try {
+      // ...
+    } catch (HttpNotFoundException $e) {
+      $this->render404Page($e);
+    } catch (UnauthorizedActionException $e) {
+      list($controller, $action) = $this->login_action;
+      $this->runAction($controller, $action);
+    }
+  }
 
   public function __construct($debug = false)
   {
@@ -116,7 +129,7 @@ abstract class Application
     $this->response->send();
 
   }
-  
+
   protected function render404Page($e)
   {
     $this->response->setStatusCode(404, 'Not Found');
