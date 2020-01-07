@@ -19,7 +19,7 @@ abstract class Application
     try {
       // ...
     } catch (HttpNotFoundException $e) {
-      $this->render404Page($e);
+      $this->render404PFage($e);
     } catch (UnauthorizedActionException $e) {
       list($controller, $action) = $this->login_action;
       $this->runAction($controller, $action);
