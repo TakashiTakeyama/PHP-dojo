@@ -26,6 +26,7 @@ class UserRepository extends DbRepository
   }
 
   public function fetchByUserName($user_name)
+  //ユーザーIDを元にレコードを取得する。ユーザーIDは引数として受け取る。
   {
     $sql = "SELECT * FROM user WHERE user_name = :user_name";
 
