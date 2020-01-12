@@ -29,4 +29,16 @@ if (isset($_GET['keyword']) === true && $_GET['keyword'] !== '') {
  * session.use_cookies = 1
  * session_only_cookies = 1
  * session.user_trans_sid = 0
+ * 全てのブラウザが対応しているわけではないがセッションIDを管理するクッキーにHttpOnly属性を
+ * 付与するものもある
+ * session.cookie_httponly = 1
+ * HttpOnly属性に対応していないブラウザからアクセスされた場合、セッションが利用できなくなる
+ * 
+ * セッションハイジャックのチェック
+ * 通常セッションの途中でAccept-CharsetやAccept-Langage, User-Agentが変更されることはほとんどない
+ * ですからこれらの値を元にしたチェックを行うことでセッションIDが盗まれた場合でもセッションハイジャックが
+ * 成立する可能性を下げることができる
+ * 方法はAccept-CharsetやAccept-Langage, User-Agentを元に生成した乱数をセッションに保存しておき
+ * セッション開始と共に保存しておいた乱数とアクセスしてきた情報を元に生成した乱数の整合性をチェックする
+ * 
  */
