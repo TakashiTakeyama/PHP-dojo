@@ -7,17 +7,21 @@ class Member {
   private $email;
   private $password;
 
-  function __construct($id, $first_name, $last_name, $email, $password)
-  {
-    $this->setId($id);
-    $this->setFirstName($first_name);
-    $this->setLastName($last_name);
-    $this->setEmail($email);
-    $this->setPassword($password);
-  }
+  // function __construct($id, $first_name, $last_name, $email, $password)
+  // {
+  //   $this->setId($id);
+  //   $this->setFirstName($first_name);
+  //   $this->setLastName($last_name);
+  //   $this->setEmail($email);
+  //   $this->setPassword($password);
+  // }
+
+  /**
+   * アクセサ: オブジェクト指向で外部からメンバ変数を参照する為のメソッド
+   */
 
   public function setId($id) {
-    $this->id = $id;
+  $this->id = $id;
   }
   
   public function getId() {
@@ -56,3 +60,16 @@ class Member {
     return $this->password;
   }
 }
+
+$member = new Member;
+$member->setId("1");
+$member->setFirstName("takashi");
+$member->setLastName("take");
+$member->setEmail("take@gmail.com");
+$member->setPassword("uketuke");
+
+echo $member->getId();
+echo $member->getFirstName();
+echo $member->getLastName();
+echo $member->getEmail();
+echo $member->getPassword();

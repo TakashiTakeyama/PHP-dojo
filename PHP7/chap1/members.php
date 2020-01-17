@@ -3,6 +3,7 @@
 class Members implements IteratorAggregate {
   private $member = [];
 
+  //引数にタイプヒンティング: パラメータの型を指定できる。
   public function add(Member $member) {
     $this->members = $member;
   }
