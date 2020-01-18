@@ -18,3 +18,10 @@ CREATE TABLE members (
   age TINYINT UNSIGNED,
   PRIMARY KEY(id)
 );
+
+INSERT INTO members (last_name, first_name, age) VALUES('田中', '一郎', 21),
+INSERT INTO members (last_name, first_name, age) VALUES
+                                                       ('山田', '二郎', 18),
+                                                       ('林', '三郎', 35),
+                                                       ('鈴木', '四郎', 20),
+                                                       ('佐藤', '五郎', 28);
