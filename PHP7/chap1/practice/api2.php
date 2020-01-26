@@ -29,5 +29,21 @@ echo "郵便番号を入力してください。" . "\n";
  * 郵便番号を入力してintgerに変換
  */
 $zipcode = intval(fgets(STDIN));
-// echo gettype($zipcode);
-getAddress($zipcode);
+
+/**
+ * preg_match: trueなら1, falseなら0を返す。
+ */
+$pattern = '/\d{7}/';
+$bool = preg_match($pattern, $zipcode);
+// echo $bool . "\n";
+// echo gettype($bool);
+
+/**
+ * 正規表現がtrueで文字列が7の時だけ住所を返す。
+ */
+if ($bool === 1 && mb_strlen($zipcode) === 7) {
+  echo $zipcode . "\n";
+  getAddress($zipcode);
+} else {
+  echo "半角整数7文字で入力してください。";
+}
