@@ -40,6 +40,7 @@ $bool = preg_match($pattern, $zipcode);
 
 /**
  * 正規表現がtrueで文字列が7の時だけ住所を返す。
+ * mb_strlen: 文字列の長さを取得する。
  */
 if ($bool === 1 && mb_strlen($zipcode) === 7) {
   echo $zipcode . "\n";
